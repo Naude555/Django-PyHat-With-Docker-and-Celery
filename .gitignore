@@ -1,0 +1,8 @@
+*.pyc
+__pycache
+.DS_Store
+.env.dev
+.env.prod
+.env.prod.db
+.sqlite3
+staticfiles

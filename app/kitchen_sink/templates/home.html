@@ -1,0 +1,75 @@
+{% load tailwind_cli %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kitchen Sink Project Setup Guide</title>
+    <head>
+        <script src="https://unpkg.com/htmx.org@2.0.1" integrity="sha384-QWGpdj554B4ETpJJC9z+ZHJcA/i59TyjxEPXiiUgN2WmTyV5OEZWCD6gQhgkdpB/" crossorigin="anonymous"></script>
+        <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/mask@3.x.x/dist/cdn.min.js"></script>
+        <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
+        <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+        {% tailwind_css %}
+    </head>
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <div class="container mx-auto px-4">
+        <h2 class="text-2xl font-bold mt-5">Took inspiration from testdriven.io</h2>
+        <p class="mt-3">Check out the tutorial here <a href="https://testdriven.io/dockerizing-django-with-postgres-gunicorn-and-nginx" class="text-blue-500">tutorial</a>.</p>
+
+        <h3 class="text-xl font-bold mt-5">Changes I made</h3>
+        <ul class="list-disc list-inside">
+            <li>Not using postgres as a database (You can add it back in if you want to, just look at what testdriven.io did)</li>
+            <li>Split settings into settings files accrording to <a href="https://github.com/HackSoftware/Django-Styleguide?tab=readme-ov-file#settings" class="text-blue-500">HackSoftware, Django Styleguide</a></li>
+            <li>Using development will also added <a href="https://django-debug-toolbar.readthedocs.io/en/latest/index.html" class="text-blue-500">Django Debug Toolbar</a></li>
+            <li>Added <a href="https://docs.celeryq.dev/en/stable/userguide/periodic-tasks.html" class="text-blue-500">Celery and Celery Beat</a> in a container</li>
+            <li>Added Tailwind via <a href="https://django-tailwind-cli.andrich.me" class="text-blue-500">Django Tailwind CLI</a></li>
+            <li>Added Scripts to be able to use <a href="https://alpinejs.dev" class="text-blue-500">Alpine.js</a></li>
+            <li>Added Scripts to be able to use <a href="https://htmx.org" class="text-blue-500">htmx</a></li>
+        </ul>
+        <p class="mt-3">If comming from Bootstrap and use to components check out <a href="https://www.penguinui.com" class="text-blue-500">Penguin UI</a> to "Get Your Project Off The Ice Fast & Easy."</p>
+
+        <h4 class="text-lg font-bold mt-5">Development</h4>
+        <p>Uses the default Django development server.</p>
+        <ol class="list-decimal list-inside">
+            <li>Rename <code>*.env.dev-sample*</code> to <code>*.env.dev*</code>.</li>
+            <li>Update the environment variables in the <code>docker-compose.yml</code> and <code>*.env.dev*</code> files.</li>
+            <li>Build the images and run the containers:
+                <pre class="bg-gray-200 text-gray-700 p-2 mt-2"><code>$ docker-compose up -d --build</code></pre>
+            </li>
+        </ol>
+        <p>Test it out at <a href="http://localhost:8000" class="text-blue-500">http://localhost:8000</a>. The "app" folder is mounted into the container and your code changes apply automatically.</p>
+        <p>tailwind is installed by default, if using bootstrap you can change as needed, the runserver command for development just remove the tailwind parameter</p>
+
+        <h4 class="text-lg font-bold mt-5">Production</h4>
+        <p>Uses gunicorn + nginx.</p>
+        <ol class="list-decimal list-inside">
+            <li>Rename <code>*.env.prod-sample*</code> to <code>*.env.prod*</code> and <code>*.env.prod.db-sample*</code> to <code>*.env.prod.db*</code>. Update the environment variables.</li>
+            <li>Build the images and run the containers:
+                <pre class="bg-gray-200 text-gray-700 p-2 mt-2"><code>$ docker-compose -f docker-compose.prod.yml up -d --build</code></pre>
+            </li>
+        </ol>
+        <p>Test it out at <a href="http://localhost:1337" class="text-blue-500">http://localhost:1337</a>. No mounted folders. To apply changes, the image must be re-built.</p>
+    </div>
+</body>
+
+<script>
+    {% if debug %}
+    if (typeof window.htmx !== "undefined") {
+        htmx.on("htmx:afterSettle", function(detail) {
+            if (
+                typeof window.djdt !== "undefined"
+                && detail.target instanceof HTMLBodyElement
+            ) {
+                djdt.show_toolbar();
+            }
+        });
+    }
+{% endif %}
+document.body.addEventListener('htmx:configRequest', (event) => {
+    event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+});
+</script>
+</html>
