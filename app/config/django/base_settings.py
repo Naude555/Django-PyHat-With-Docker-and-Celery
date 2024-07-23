@@ -130,4 +130,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 #########################################################################
 # Celery Configuration
-from config.settings.celery import *
+
+CELERY_BROKER_URL = "redis://redis:6379"
+CELERY_RESULT_BACKEND = "redis://redis:6379"
+# from config.settings.celery import *
