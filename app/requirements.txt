@@ -1,7 +1,7 @@
 Django==4.2.13
 django-debug-toolbar==4.4.6
 gunicorn==21.2.0
-psycopg2-binary==2.9.6
+psycopg2-binary==2.9.9
 celery==5.4.0
 django-tailwind-cli==2.13.0
 redis==5.0.7
